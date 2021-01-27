@@ -1,14 +1,13 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+import time
 
 server = Flask(__name__)
 
 messages = [
-    {'username':'vikvas','text':'Привет'},
-    {'username':'egvas','text':'Здравствуйте!'},
-    {'username':'julia_a','text':'Добрый день'}
+    {'username':'vikvas','text':'Привет','timestamp': time.time()},
+    {'username':'egvas','text':'Здравствуйте!','timestamp': time.time()},
+    {'username':'julia_a','text':'Добрый день','timestamp': time.time()}
 ]
-
-
 
 @server.route('/')
 def hello():
@@ -17,6 +16,9 @@ def hello():
     <a target="_blank" href=/index>Index</a>'''
 @server.route('/get_messages')
 def get_messages():
+    after = request.args['after']
+    result = []
+
     return{
         'messages': messages
     }
@@ -30,8 +32,15 @@ def index():
 def day(num):
     return render_template(f"day-{num}.html")
 
+@server.route('/send_messages')
+def send_messages():
 
-
+    messages.append({
+        'username': request.json['username'],
+         'text': request.json['text'],
+         'timestamp': time.time()
+    })
 
 
 server.run()
+
