@@ -16,11 +16,15 @@ def hello():
     <a target="_blank" href=/index>Index</a>'''
 @server.route('/get_messages')
 def get_messages():
-    after = request.args['after']
+    after = float(request.args['after'])
+
     result = []
+    for message in messages:
+        if message ['timestamp'] > after:
+            result.append(message)
 
     return{
-        'messages': messages
+        'messages': result
     }
 
 @server.route('/index')
