@@ -20,7 +20,7 @@ def get_messages():
 
     result = []
     for message in messages:
-        if message ['timestamp'] > after:
+        if message['timestamp'] > after:
             result.append(message)
 
     return{
