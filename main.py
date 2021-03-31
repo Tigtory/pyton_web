@@ -1,9 +1,11 @@
 from telegram import Update, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
+from openpyxl import load_workbook
 
-
-TOKEN = '1630917550:AAFHi9tDVlU5JxRKxEcFbIaCh71VrMoHb1I'
-
+TOKEN = '1630917550:AAE09IrOaZ6Pg7KgU3meDlZxu2xvfhv05zQ'
+book = load_workbook('база данных.xlsx')
+sheet = book['Лист1']
+stickers_page = book['Стикеры']
 
 def main():
     updater = Updater(token=TOKEN)    # объект, который ловит сообщения из телеграм
@@ -44,17 +46,26 @@ def do_help(update, context):
 
 def do_something(update, context):
     text = update.message.text
+
+    for row in range(2, stickers_page.max_row + 1):
+        catch_phrase = stickers_page.cell(row=row, column=4).value
+        print(catch_phrase)
+        print(text)
+        if catch_phrase in text:
+            stickers_id = stickers_page.cell(row=row, column=3).value
+            update.message.reply_sticker(stickers_id)
+            return
+
     if text == "1":
         update.message.reply_text(text="Эта кнопка 1", reply_markup=ReplyKeyboardRemove())
     elif text == "2":
         update.message.reply_text(text="А это кнопка 2", reply_markup=ReplyKeyboardRemove())
-        update.message.reply_sticker('CAACAgIAAxkBAAObYEimXjZXqlBA5MMrh0MGMjOu7AkAAlYsAALpVQUYUZfaCoweVn8eBAпп')
+        update.message.reply_sticker('CAACAgIAAxkBAAObYEimXjZXqlBA5MMrh0MGMjOu7AkAAlYsAALpVQUYUZfaCoweVn8eBA')
     elif text == "3":
         update.message.reply_text(text="Но вот эта кнопка 3", reply_markup=ReplyKeyboardRemove())
 
-
 def do_sticker(update: Update, context):
     sticker_id = update.message.sticker.file_id
-    update.message.reply_sticker(sticker_id)
+    update.message.reply_text(sticker_id)
 
 main()
